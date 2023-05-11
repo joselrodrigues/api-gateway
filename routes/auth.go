@@ -9,5 +9,5 @@ import (
 func auth(app *fiber.App) {
 	app.Get("/signin", c.SignIn)
 	app.Get("/singup", c.SingUp)
-	// app.Get("/refreshtoken", s.RefreshToken)
+	app.Get("/refreshtoken", c.RefreshToken)
 }

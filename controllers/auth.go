@@ -59,3 +59,19 @@ func SingUp(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{"access_token": response.AccessToken, "refresh_token": response.RefreshToken})
 }
+
+func RefreshToken(c *fiber.Ctx) error {
+	conn := grcp.Setup()
+	client := grcp.NewAuthServiceClient(conn)
+	userAgent := c.Get("User-Agent")
+	infoUserAgent := useragent.Parse(userAgent)
+
+	response, err := services.RefreshToken(c, client, infoUserAgent)
+
+	if err != nil {
+		fiberError := grcp.GrpcErrorToFiberError(err)
+		return c.Status(fiberError.Code).JSON(fiber.Map{"error": fiberError.Message})
+	}
+
+	return c.JSON(fiber.Map{"access_token": response.AccessToken})
+}
