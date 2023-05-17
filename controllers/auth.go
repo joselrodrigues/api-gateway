@@ -16,7 +16,7 @@ func SignIn(c *fiber.Ctx) error {
 	userAgent := c.Get("User-Agent")
 	infoUserAgent := useragent.Parse(userAgent)
 
-	response, err := services.SignIn(c, client)
+	response, err := services.SignIn(c, client, infoUserAgent)
 
 	if err != nil {
 		fiberError := grcp.GrpcErrorToFiberError(err)
@@ -41,7 +41,7 @@ func SingUp(c *fiber.Ctx) error {
 	userAgent := c.Get("User-Agent")
 	infoUserAgent := useragent.Parse(userAgent)
 
-	response, err := services.SignUp(c, client)
+	response, err := services.SignUp(c, client, infoUserAgent)
 
 	if err != nil {
 		fiberError := grcp.GrpcErrorToFiberError(err)

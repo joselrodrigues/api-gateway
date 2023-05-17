@@ -3,28 +3,36 @@ package services
 import (
 	pb "apigateway/protos"
 	"context"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mileusna/useragent"
+	"google.golang.org/grpc/metadata"
 )
 
-func SignIn(c *fiber.Ctx, client pb.AuthServiceClient) (*pb.Response, error) {
+func SignIn(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.UserAgent) (*pb.Response, error) {
 	email := c.Query("email")
 	username := c.Query("username")
 	password := c.Query("password")
 
-	response, err := client.SignIn(context.Background(), &pb.Request{Email: email, Username: username, Password: password})
+	md := metadata.Pairs("session-device", fmt.Sprintf("%s(%s)", infoUserAgent.Name, infoUserAgent.OS))
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+
+	response, err := client.SignIn(ctx, &pb.Request{Email: email, Username: username, Password: password})
 
 	return response, err
 
 }
 
-func SignUp(c *fiber.Ctx, client pb.AuthServiceClient) (*pb.Response, error) {
+func SignUp(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.UserAgent) (*pb.Response, error) {
 	email := c.Query("email")
 	username := c.Query("username")
 	password := c.Query("password")
 
-	response, err := client.SignUp(context.Background(), &pb.Request{Email: email, Username: username, Password: password})
+	md := metadata.Pairs("session-device", fmt.Sprintf("%s(%s)", infoUserAgent.Name, infoUserAgent.OS))
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+
+	response, err := client.SignUp(ctx, &pb.Request{Email: email, Username: username, Password: password})
 
 	return response, err
 
