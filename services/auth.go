@@ -15,7 +15,7 @@ func SignIn(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.U
 	username := c.Query("username")
 	password := c.Query("password")
 
-	md := metadata.Pairs("session-device", fmt.Sprintf("%s(%s)", infoUserAgent.Name, infoUserAgent.OS))
+	md := metadata.Pairs("user-device", fmt.Sprintf("%s(%s)", infoUserAgent.Name, infoUserAgent.OS))
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
 	response, err := client.SignIn(ctx, &pb.Request{Email: email, Username: username, Password: password})
@@ -29,7 +29,7 @@ func SignUp(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.U
 	username := c.Query("username")
 	password := c.Query("password")
 
-	md := metadata.Pairs("session-device", fmt.Sprintf("%s(%s)", infoUserAgent.Name, infoUserAgent.OS))
+	md := metadata.Pairs("user-device", fmt.Sprintf("%s(%s)", infoUserAgent.Name, infoUserAgent.OS))
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
 	response, err := client.SignUp(ctx, &pb.Request{Email: email, Username: username, Password: password})
