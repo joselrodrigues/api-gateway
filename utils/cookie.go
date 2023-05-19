@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/mileusna/useragent"
 )
@@ -8,6 +10,8 @@ import (
 type CookieInfo struct {
 	AccessToken  string
 	RefreshToken string
+	TtlAccess    time.Duration
+	TtlRefresh   time.Duration
 }
 
 func SetAccessTokenCookie(c *fiber.Ctx, userAgentInfo useragent.UserAgent, cookieInfo CookieInfo) {
@@ -16,6 +20,7 @@ func SetAccessTokenCookie(c *fiber.Ctx, userAgentInfo useragent.UserAgent, cooki
 		cookie.Name = "access_token"
 		cookie.Value = cookieInfo.AccessToken
 		cookie.HTTPOnly = true
+		cookie.Expires = time.Now().Add(cookieInfo.TtlAccess)
 		c.Cookie(cookie)
 	}
 }
@@ -26,6 +31,7 @@ func SetRefreshTokenCookie(c *fiber.Ctx, userAgentInfo useragent.UserAgent, cook
 		cookie.Name = "refresh_token"
 		cookie.Value = cookieInfo.RefreshToken
 		cookie.HTTPOnly = true
+		cookie.Expires = time.Now().Add(cookieInfo.TtlRefresh)
 		c.Cookie(cookie)
 	}
 }
