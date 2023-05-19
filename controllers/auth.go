@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"apigateway/config"
 	"apigateway/grcp"
 	"apigateway/services"
 	"apigateway/utils"
@@ -23,13 +24,15 @@ func SignIn(c *fiber.Ctx) error {
 		return c.Status(fiberError.Code).JSON(fiber.Map{"error": fiberError.Message})
 	}
 
+	cfg := c.Locals("cfg").(config.Config)
+
 	utils.SetAccessTokenCookie(c, infoUserAgent, utils.CookieInfo{
-		AccessToken:  response.AccessToken,
-		RefreshToken: response.RefreshToken,
+		AccessToken: response.AccessToken,
+		TtlAccess:   cfg.AccessTokenExpiresIn,
 	})
 	utils.SetRefreshTokenCookie(c, infoUserAgent, utils.CookieInfo{
-		AccessToken:  response.AccessToken,
 		RefreshToken: response.RefreshToken,
+		TtlRefresh:   cfg.RefreshTokenExpiresIn,
 	})
 
 	return c.JSON(fiber.Map{"access_token": response.AccessToken, "refresh_token": response.RefreshToken})
@@ -48,13 +51,15 @@ func SingUp(c *fiber.Ctx) error {
 		return c.Status(fiberError.Code).JSON(fiber.Map{"error": fiberError.Message})
 	}
 
+	cfg := c.Locals("cfg").(config.Config)
+
 	utils.SetAccessTokenCookie(c, infoUserAgent, utils.CookieInfo{
-		AccessToken:  response.AccessToken,
-		RefreshToken: response.RefreshToken,
+		AccessToken: response.AccessToken,
+		TtlAccess:   cfg.AccessTokenExpiresIn,
 	})
 	utils.SetRefreshTokenCookie(c, infoUserAgent, utils.CookieInfo{
-		AccessToken:  response.AccessToken,
 		RefreshToken: response.RefreshToken,
+		TtlRefresh:   cfg.RefreshTokenExpiresIn,
 	})
 
 	return c.JSON(fiber.Map{"access_token": response.AccessToken, "refresh_token": response.RefreshToken})
