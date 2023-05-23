@@ -2,6 +2,7 @@ package services
 
 import (
 	pb "apigateway/protos"
+	"apigateway/utils"
 	"context"
 	"fmt"
 
@@ -33,6 +34,27 @@ func SignUp(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.U
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
 	response, err := client.SignUp(ctx, &pb.Request{Email: email, Username: username, Password: password})
+
+	return response, err
+
+}
+
+func SignOut(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.UserAgent) (*pb.DeleteRefreshTokenResponse, error) {
+	var refreshToken string
+	session_id := c.Query("session_id")
+
+	if infoUserAgent.Desktop {
+		refreshToken = c.Cookies("refresh_token")
+	} else {
+		refreshToken = c.Query("refresh_token")
+	}
+
+	response, err := client.SignOut(context.Background(), &pb.DeleteRefreshTokenRequest{RefreshToken: refreshToken, SessionId: session_id})
+
+	if err == nil && session_id == "" {
+		utils.DeleteCookie(c, infoUserAgent, "refresh_token")
+		utils.DeleteCookie(c, infoUserAgent, "access_token")
+	}
 
 	return response, err
 

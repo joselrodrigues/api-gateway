@@ -38,7 +38,7 @@ func SignIn(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"access_token": response.AccessToken, "refresh_token": response.RefreshToken})
 }
 
-func SingUp(c *fiber.Ctx) error {
+func SignUp(c *fiber.Ctx) error {
 	conn := grcp.Setup()
 	client := grcp.NewAuthServiceClient(conn)
 	userAgent := c.Get("User-Agent")
@@ -63,6 +63,22 @@ func SingUp(c *fiber.Ctx) error {
 	})
 
 	return c.JSON(fiber.Map{"access_token": response.AccessToken, "refresh_token": response.RefreshToken})
+}
+
+func SignOut(c *fiber.Ctx) error {
+	conn := grcp.Setup()
+	client := grcp.NewAuthServiceClient(conn)
+	userAgent := c.Get("User-Agent")
+	infoUserAgent := useragent.Parse(userAgent)
+
+	_, err := services.SignOut(c, client, infoUserAgent)
+
+	if err != nil {
+		fiberError := grcp.GrpcErrorToFiberError(err)
+		return c.Status(fiberError.Code).JSON(fiber.Map{"error": fiberError.Message})
+	}
+
+	return c.JSON(fiber.Map{"message": "successfully signed out"})
 }
 
 func RefreshToken(c *fiber.Ctx) error {

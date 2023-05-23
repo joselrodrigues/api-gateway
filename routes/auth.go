@@ -8,6 +8,7 @@ import (
 
 func auth(app *fiber.App) {
 	app.Get("/signin", c.SignIn)
-	app.Get("/singup", c.SingUp)
+	app.Get("/signup", c.SignUp)
 	app.Get("/refreshtoken", c.RefreshToken)
+	app.Get("/signout", c.SignOut)
 }
