@@ -74,3 +74,20 @@ func RefreshToken(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent usera
 	return response, err
 
 }
+
+func Sessions(c *fiber.Ctx, client pb.AuthServiceClient, infoUserAgent useragent.UserAgent) (*pb.SessionResponse, error) {
+	var refreshToken string
+	var accessToken string
+
+	if infoUserAgent.Desktop {
+		refreshToken = c.Cookies("refresh_token")
+		accessToken = c.Cookies("access_token")
+	} else {
+		refreshToken = c.Query("refresh_token")
+		accessToken = c.Query("access_token")
+	}
+
+	response, err := client.Sessions(context.Background(), &pb.SessionRequest{RefreshToken: refreshToken, AccessToken: accessToken})
+
+	return response, err
+}

@@ -11,4 +11,5 @@ func auth(app *fiber.App) {
 	app.Get("/signup", c.SignUp)
 	app.Get("/refreshtoken", c.RefreshToken)
 	app.Get("/signout", c.SignOut)
+	app.Get("/sessions", c.Sessions)
 }
